@@ -1,0 +1,16 @@
+---
+
+- name: Install matrix server
+  apt:
+    pkg: "{{item}}"
+    state: present
+    update_cache: yes
+  with_items:
+    - lsof
+    - curl
+    - python
+    - python-pip
+    - matrix-synapse
+  register: aptout
+
+- debug: var=aptout

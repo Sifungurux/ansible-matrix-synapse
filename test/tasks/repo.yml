@@ -1,0 +1,22 @@
+---
+- name: Install apt-transport-https
+  apt:
+    pkg: apt-transport-https
+    state: latest
+    update_cache: yes
+
+- name: Adding matrix repo
+  blockinfile:
+    create: yes
+    path: /etc/apt/sources.list.d/matrix.list
+    block: |
+      deb https://matrix.org/packages/debian/ stretch main
+      deb-src https://matrix.org/packages/debian stretch main
+
+- name: Add matrix apt-key
+  apt_key:
+    url: https://matrix.org/packages/debian/repo-key.asc
+    state: present  
+
+
+
