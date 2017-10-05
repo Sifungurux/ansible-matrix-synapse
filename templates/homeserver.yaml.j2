@@ -296,7 +296,7 @@ enable_registration: False
 
 # If set, allows registration by anyone who also has the shared
 # secret, even if registration is otherwise disabled.
-# registration_shared_secret: <PRIVATE STRING>
+registration_shared_secret: {{ shared_secret }}
 
 # Sets the expiry for the short term user creation in
 # milliseconds. For instance the bellow duration is two weeks
