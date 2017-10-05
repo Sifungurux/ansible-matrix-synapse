@@ -6,3 +6,6 @@ server_name: <server url>
 
 # Client privacy
 report_stats: false
+
+# Admin settings
+admin_password: testpassword

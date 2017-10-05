@@ -1,0 +1,23 @@
+---
+
+- name: Server name config
+  template: 
+    src: template/server_name.yaml.j2
+    dest: /etc/matrix-synapse/conf.d/server_name.yaml
+    mode: 0644
+
+- name: Server log report config
+  template: 
+    src: template/report_stats.yaml.j2
+    dest: /etc/matrix-synapse/conf.d/report_stats.yaml
+    mode: 0644
+
+- name: Create password for admin user
+  shell: "makepasswd --clearfrom=- --crypt-md5 <<< {{ admin_password  }}"
+    register: hash_pass.stdout
+
+- name: Add admin user
+  shell: "register_new_matrix_user -u administrator -p {{ hash_pass.stdout }} -a -c /etc/matrix-synapse/homeserver.yaml https://localhost:8448"
+  
+
+
