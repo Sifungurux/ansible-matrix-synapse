@@ -1,8 +1,7 @@
 ---
 
 # Server configurations
-server_name: <server url>
-
+report_stats: no
 
 # Client privacy
 report_stats: false

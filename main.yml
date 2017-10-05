@@ -2,6 +2,7 @@
 - hosts: all
   become: yes
   become_method: sudo
+  gather_facts: yes
   tasks:
           - include: tasks/repo.yml
           - include: tasks/install.yml
