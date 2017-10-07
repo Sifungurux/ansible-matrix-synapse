@@ -1,0 +1,15 @@
+---
+
+- name: Check if database has been buildt
+  shell: sqlite3 -line /var/lib/matrix-synapse/homeserver.db 'SELECT name FROM sqlite_master WHERE type="table" AND name="users";'
+  register: table
+
+- name: Check if admin users is present
+  shell: sqlite3 -line /var/lib/matrix-synapse/homeserver.db 'select name from users where name = "@administrator:matrix";'
+  register: adminpresent
+  when: table.stdout != ""
+
+- name: Add admin user
+  shell: "register_new_matrix_user -u administrator -p {{ admin_password }} -a -c /etc/matrix-synapse/homeserver.yaml https://localhost:8448"
+  when: adminpresent.stdout == ""  or table.stdout == ""
+
