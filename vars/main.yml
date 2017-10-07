@@ -4,8 +4,5 @@
 report_stats: no
 shared_secret: Hemmeligt
 
-# Client privacy
-report_stats: false
-
 # Admin settings
 admin_password: testpassword

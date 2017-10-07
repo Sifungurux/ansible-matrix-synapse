@@ -15,8 +15,8 @@
     - curl
     - python
     - makepasswd
+    - sqlite3
     - python-pip
     - matrix-synapse
   register: aptout
 
-- debug: var=aptout

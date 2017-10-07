@@ -18,12 +18,13 @@
     dest: /etc/matrix-synapse/homeserver.yaml
     mode: 0644
 
-- name: Create password for admin user
-  shell: "makepasswd --clearfrom=- --crypt-md5 <<< {{ admin_password  }}"
-  register: hashpass
+- name: Homeserver.db permissions
+  file:
+    state: touch
+    path: /var/lib/matrix-synapse/homeserver.db
+    owner: matrix-synapse
+    group: root
 
-- name: Add admin user
-  shell: "register_new_matrix_user -u administrator -p {{ hashpass.stdout_lines }} -a -c /etc/matrix-synapse/homeserver.yaml https://localhost:8448"
-  
-
+- name: ensure apache is running (and enable it at boot)
+  service: name=matrix-synapse state=started enabled=yes
 

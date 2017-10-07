@@ -7,5 +7,6 @@
           - include: tasks/repo.yml
           - include: tasks/install.yml
           - include: tasks/configure.yml
+          - include: tasks/user_control.yml
                   #- tasks/encrypt.yml
                   #- tasks/web.yml
