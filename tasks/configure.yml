@@ -12,19 +12,17 @@
     dest: /etc/matrix-synapse/conf.d/report_stats.yaml
     mode: 0644
 
-- name: Server log report config
+- name: Server log homeserver config
   template: 
     src: templates/homeserver.yaml.j2
     dest: /etc/matrix-synapse/homeserver.yaml
     mode: 0644
 
-- name: Homeserver.db permissions
+- name: setting ownership on homeserver.db
   file:
     state: touch
     path: /var/lib/matrix-synapse/homeserver.db
     owner: matrix-synapse
-    group: root
 
 - name: ensure apache is running (and enable it at boot)
-  service: name=matrix-synapse state=started enabled=yes
-
+  service: name=matrix-synapse state=restarted enabled=yes

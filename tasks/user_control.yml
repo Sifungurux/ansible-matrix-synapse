@@ -1,15 +1,23 @@
 ---
 
-- name: Check if database has been buildt
-  shell: sqlite3 -line /var/lib/matrix-synapse/homeserver.db 'SELECT name FROM sqlite_master WHERE type="table" AND name="users";'
-  register: table
+- name: Database is created
+  shell: sqlite3 -line /var/lib/matrix-synapse/homeserver.db '.tables'
+  register: tables
+
+- debug: msg="{{tables.stdout}}"
 
 - name: Check if admin users is present
   shell: sqlite3 -line /var/lib/matrix-synapse/homeserver.db 'select name from users where name = "@administrator:matrix";'
   register: adminpresent
-  when: table.stdout != ""
+  when: tables.stdout != "" 
+
+- debug: msg="{{adminpresent}}"
 
 - name: Add admin user
-  shell: "register_new_matrix_user -u administrator -p {{ admin_password }} -a -c /etc/matrix-synapse/homeserver.yaml https://localhost:8448"
-  when: adminpresent.stdout == ""  or table.stdout == ""
+  shell: "register_new_matrix_user -u administrator -p {{ admin_password }} -a -c /etc/matrix-synapse/homeserver.yaml https://localhost:8448 | cat"
+  register: result
+  until: result.stdout.find("Success.") != -1
+  retries: 5
+  delay: 10
+  when: tables.stdout == "" or adminpresent.stdout == ""
 
