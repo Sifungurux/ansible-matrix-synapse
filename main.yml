@@ -4,9 +4,9 @@
   become_method: sudo
   gather_facts: yes
   tasks:
-          - include: tasks/repo.yml
-          - include: tasks/install.yml
-          - include: tasks/configure.yml
-          - include: tasks/user_control.yml
+          - include_tasks: tasks/repo.yml
+          - include_tasks: tasks/install.yml
+          - include_tasks: tasks/configure.yml
+          - include_tasks: tasks/user_control.yml
                   #- tasks/encrypt.yml
                   #- tasks/web.yml
