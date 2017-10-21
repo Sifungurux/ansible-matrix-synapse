@@ -1,6 +1,6 @@
 ---
 # Easy-rsa configuration Debian
-parent_dir: /etc/openvpn
+parent_dir: "/etc/ssl/{{ansible_hostname}}/"
 
 # Easy-rsa configuration
 easy_rsa_dir: /usr/share/easy-rsa

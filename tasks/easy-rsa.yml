@@ -1,5 +1,10 @@
 ---
 
+- name: Include variables
+  vars:
+  include_vars:
+    file: default/easy-rsa.yml
+
 - name: Certificate file check
   stat: 
     path: "{{ parent_dir }}/certs/dh{{ easy_rsa_keys.size }}.pem"

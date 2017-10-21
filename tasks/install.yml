@@ -3,7 +3,7 @@
 - name: Include variables
   vars: 
   include_vars:
-    file: vars/main.yml
+    file: defaults/main.yml
 
 - name: Install matrix server
   apt:

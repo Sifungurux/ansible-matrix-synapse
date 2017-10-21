@@ -1,8 +1,0 @@
----
-
-# Server configurations
-report_stats: no
-shared_secret: Hemmeligt
-
-# Admin settings
-admin_password: testpassword

@@ -1,5 +1,5 @@
 ---
-- hosts: matrixserver
+- hosts: all
   become: yes
   become_method: sudo
   gather_facts: yes
@@ -8,5 +8,5 @@
           - include_tasks: tasks/install.yml
           - include_tasks: tasks/configure.yml
           - include_tasks: tasks/user_control.yml
-                  #- tasks/encrypt.yml
+          - include_tasks: tasks/easy-rsa.yml
                   #- tasks/web.yml
