@@ -1,0 +1,7 @@
+---
+
+- include_tasks: tasks/repo.yml
+- include_tasks: tasks/install.yml
+- include_tasks: tasks/configure.yml
+- include_tasks: tasks/user_control.yml
+#- tasks/web.yml

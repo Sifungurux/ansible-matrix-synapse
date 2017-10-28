@@ -12,7 +12,6 @@
 # This variable should point to
 # the top level of the easy-rsa
 # tree.
-export OPENVPN="{{ openvpn_dir }}"
 export EASY_RSA="{{ easy_rsa_cert_dir }}"
 export EASY_RSA_DIR=`pwd`
 
@@ -72,4 +71,3 @@ export KEY_NAME="{{ easy_rsa_keys.name }}"
 export KEY_OU="{{ easy_rsa_keys.organizational_unit }}"
 export PKCS11_MODULE_PATH=changeme
 export PKCS11_PIN=1234
-
