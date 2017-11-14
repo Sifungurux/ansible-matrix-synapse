@@ -5,4 +5,4 @@
   gather_facts: yes
   roles:
           - { role: ../../ansible-matrix-synapse }
-          - { role: 'git+https://github.com/Sifungurux/ansible-easyrsa3.git'}
+          - { role: "git+https://github.com/Sifungurux/ansible-easyrsa3.git" }
