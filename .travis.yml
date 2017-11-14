@@ -1,6 +1,6 @@
 ---
 
-addons:  
+addons:
   hostname: matrix-synapse
 
 language: python
