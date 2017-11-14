@@ -4,5 +4,5 @@
   become_method: sudo
   gather_facts: yes
   roles:
-          - ansible-matrix-synapse
-          - ansible-easyrsa3
+          - { role: ../../ansible-matrix-synapse }
+          - { role: 'git+https://github.com/Sifungurux/ansible-easyrsa3.git'}
