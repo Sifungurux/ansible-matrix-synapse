@@ -15,7 +15,7 @@ install:
 
 script:
   - sudo echo "deb http://archive.ubuntu.com/ubuntu xenial universe multiverse" >> /etc/apt/sources.list
-  - sudo echo "deb-src http://archive.ubuntu.com/ubuntu xenial universe multiverse" >> etc/apt/sources.list
+  - sudo echo "deb-src http://archive.ubuntu.com/ubuntu xenial universe multiverse" >> /etc/apt/sources.list
   - sudo apt-get update -qq
   - ansible-playbook -i tests/inventory tests/test.yml --syntax-check
   - ansible-playbook -i tests/inventory tests/test.yml --connection=local --become
