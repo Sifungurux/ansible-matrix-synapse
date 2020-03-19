@@ -10,9 +10,9 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: apt-get update -qq
+- script: sudo apt-get update -qq
   displayName: 'Running update'
-- script: apt-get install -qq python-apt
+- script: sudo apt-get install -qq python-apt
   displayName: 'Installating python'
 
 - script: |
