@@ -1,7 +1,36 @@
 ---
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - synapse_server_name | length > 0
+      - synapse_deployment_mode in ['server', 'docker']
+      - synapse_database_engine in ['postgresql', 'sqlite']
+      - synapse_tls_mode in ['letsencrypt', 'selfsigned', 'none']
+    fail_msg: "Required Synapse variables are not properly configured."
 
-- include_tasks: tasks/repo.yml
-- include_tasks: tasks/install.yml
-- include_tasks: tasks/configure.yml
-- include_tasks: tasks/user_control.yml
-#- tasks/web.yml
+- name: Validate Let's Encrypt email is set
+  ansible.builtin.assert:
+    that:
+      - synapse_letsencrypt_email | length > 0
+    fail_msg: "synapse_letsencrypt_email is required when synapse_tls_mode is letsencrypt."
+  when: synapse_tls_mode == 'letsencrypt'
+
+- name: Validate database password is set for PostgreSQL
+  ansible.builtin.assert:
+    that:
+      - synapse_database_password | length > 0
+    fail_msg: "synapse_database_password is required when using PostgreSQL."
+  when: synapse_database_engine == 'postgresql'
+
+- name: Include OS-specific variables
+  ansible.builtin.include_vars:
+    file: "{{ ansible_os_family }}.yml"
+  when: synapse_deployment_mode == 'server'
+
+- name: Server deployment
+  ansible.builtin.include_tasks: server/main.yml
+  when: synapse_deployment_mode == 'server'
+
+- name: Docker deployment
+  ansible.builtin.include_tasks: docker/main.yml
+  when: synapse_deployment_mode == 'docker'

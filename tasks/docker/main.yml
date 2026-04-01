@@ -1,0 +1,14 @@
+---
+- name: Install Docker prerequisites
+  ansible.builtin.include_tasks: install.yml
+
+- name: Configure TLS certificates
+  ansible.builtin.include_tasks: tls.yml
+  when: synapse_tls_mode != 'none'
+
+- name: Configure and start Synapse container
+  ansible.builtin.include_tasks: configure.yml
+
+- name: Create admin user
+  ansible.builtin.include_tasks: user_control.yml
+  when: synapse_create_admin | bool

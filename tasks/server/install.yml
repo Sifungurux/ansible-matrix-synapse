@@ -1,0 +1,12 @@
+---
+- name: Install Matrix Synapse and dependencies
+  ansible.builtin.apt:
+    name: "{{ _synapse_packages }}"
+    state: present
+    update_cache: true
+
+- name: Install TLS packages
+  ansible.builtin.apt:
+    name: "{{ _synapse_tls_packages[synapse_tls_mode] }}"
+    state: present
+  when: synapse_tls_mode != 'none'

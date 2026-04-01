@@ -1,0 +1,37 @@
+# {{ ansible_managed }}
+services:
+  synapse:
+    image: {{ synapse_docker_image }}
+    container_name: synapse
+    restart: unless-stopped
+    volumes:
+      - {{ synapse_docker_data_dir }}:/data
+    ports:
+      - "{{ synapse_http_port }}:8008"
+{% if synapse_tls_mode != 'none' %}
+      - "{{ synapse_federation_port }}:8448"
+{% endif %}
+    environment:
+      SYNAPSE_CONFIG_PATH: /data/homeserver.yaml
+{% if synapse_database_engine == 'postgresql' %}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: synapse-postgres
+    restart: unless-stopped
+    volumes:
+      - {{ synapse_docker_data_dir }}/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: {{ synapse_database_user }}
+      POSTGRES_PASSWORD: {{ synapse_database_password }}
+      POSTGRES_DB: {{ synapse_database_name }}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U {{ synapse_database_user }}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+{% endif %}

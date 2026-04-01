@@ -1,0 +1,35 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Check Synapse service is running
+      ansible.builtin.service_facts:
+
+    - name: Assert Synapse is active
+      ansible.builtin.assert:
+        that:
+          - "'matrix-synapse.service' in ansible_facts.services"
+          - "ansible_facts.services['matrix-synapse.service'].state == 'running'"
+
+    - name: Check Synapse responds on HTTP port
+      ansible.builtin.uri:
+        url: http://localhost:8008/_matrix/client/versions
+        return_content: true
+        status_code: 200
+      register: _synapse_versions
+
+    - name: Assert response contains versions
+      ansible.builtin.assert:
+        that:
+          - "'versions' in _synapse_versions.json"
+
+    - name: Check homeserver.yaml exists
+      ansible.builtin.stat:
+        path: /etc/matrix-synapse/homeserver.yaml
+      register: _homeserver_yaml
+
+    - name: Assert homeserver.yaml exists
+      ansible.builtin.assert:
+        that:
+          - _homeserver_yaml.stat.exists

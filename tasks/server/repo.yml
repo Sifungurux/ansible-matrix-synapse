@@ -1,0 +1,19 @@
+---
+- name: Install apt-transport-https
+  ansible.builtin.apt:
+    name: apt-transport-https
+    state: present
+    update_cache: true
+
+- name: Download Matrix signing key
+  ansible.builtin.get_url:
+    url: https://packages.matrix.org/debian/matrix-org-archive-keyring.gpg
+    dest: /usr/share/keyrings/matrix-org-archive-keyring.gpg
+    mode: "0644"
+
+- name: Add Matrix apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/matrix-org-archive-keyring.gpg] https://packages.matrix.org/debian/ {{ ansible_distribution_release }} main"
+    filename: matrix-org
+    state: present
+    update_cache: true

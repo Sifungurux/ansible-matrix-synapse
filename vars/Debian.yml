@@ -1,0 +1,21 @@
+---
+_synapse_packages:
+  - matrix-synapse-py3
+  - python3
+  - python3-pip
+  - python3-psycopg2
+
+_synapse_tls_packages:
+  letsencrypt:
+    - certbot
+  selfsigned:
+    - openssl
+    - python3-cryptography
+
+_synapse_postgresql_packages:
+  - postgresql
+  - python3-psycopg2
+
+_synapse_service_name: matrix-synapse
+_synapse_user: matrix-synapse
+_synapse_group: matrix-synapse

@@ -1,0 +1,38 @@
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+
+driver:
+  name: docker
+
+platforms:
+  - name: synapse-docker-host
+    image: debian:bookworm
+    command: /lib/systemd/systemd
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      synapse-docker-host:
+        synapse_server_name: test.matrix.local
+        synapse_deployment_mode: docker
+        synapse_database_engine: postgresql
+        synapse_database_password: synapse-test-password
+        synapse_tls_mode: none
+        synapse_registration_shared_secret: test-secret-change-me
+        synapse_create_admin: false
+
+verifier:
+  name: ansible
