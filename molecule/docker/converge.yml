@@ -3,4 +3,4 @@
   hosts: all
   become: true
   roles:
-    - role: ansible-matrix-synapse
+    - role: matrix_synapse
