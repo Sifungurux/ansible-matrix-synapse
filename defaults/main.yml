@@ -7,7 +7,7 @@ synapse_server_name: "{{ inventory_hostname }}"
 synapse_public_baseurl: "https://{{ synapse_server_name }}"
 
 # Synapse version (used as Docker image tag; server mode uses apt latest)
-synapse_version: latest
+synapse_version: v1.149.1
 synapse_docker_image: "matrixdotorg/synapse:{{ synapse_version }}"
 
 # Network

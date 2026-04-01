@@ -19,7 +19,7 @@ services:
         condition: service_healthy
 
   postgres:
-    image: postgres:16-alpine
+    image: postgres:16.13-alpine
     container_name: synapse-postgres
     restart: unless-stopped
     volumes:
