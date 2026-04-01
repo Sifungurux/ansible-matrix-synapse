@@ -1,19 +1,23 @@
 # ansible-matrix-synapse
 
-Ansible role to deploy [Matrix Synapse](https://github.com/element-hq/synapse) homeserver.
+Ansible role to deploy
+[Matrix Synapse](https://github.com/element-hq/synapse) homeserver.
 
 Supports two deployment modes:
 - **Server** — bare metal / VM install on Debian Bookworm
-- **Docker** — containerized deployment using the official Alpine-based image
+- **Docker** — containerized deployment using the official Alpine image
 
 ## Requirements
 
 - Ansible >= 2.15
 - Target: Debian 12 (Bookworm)
-- Required collections (install with `ansible-galaxy collection install -r requirements.yml`):
-  - `community.postgresql`
-  - `community.docker`
-  - `community.crypto`
+- Required collections:
+
+```bash
+ansible-galaxy collection install -r requirements.yml
+```
+
+Collections: `community.postgresql`, `community.docker`, `community.crypto`
 
 ## Quick Start
 
@@ -52,33 +56,35 @@ Supports two deployment modes:
 
 ## Role Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `synapse_deployment_mode` | `server` | `server` or `docker` |
-| `synapse_server_name` | `{{ inventory_hostname }}` | Matrix server name (immutable) |
-| `synapse_public_baseurl` | `https://{{ synapse_server_name }}` | Public base URL |
-| `synapse_version` | `latest` | Docker image tag |
-| `synapse_tls_mode` | `letsencrypt` | `letsencrypt`, `selfsigned`, or `none` |
-| `synapse_letsencrypt_email` | `""` | Required when `synapse_tls_mode: letsencrypt` |
-| `synapse_database_engine` | `postgresql` | `postgresql` (recommended) or `sqlite` |
-| `synapse_database_host` | `localhost` | PostgreSQL host |
-| `synapse_database_port` | `5432` | PostgreSQL port |
-| `synapse_database_name` | `synapse` | Database name |
-| `synapse_database_user` | `synapse` | Database user |
-| `synapse_database_password` | `""` | Database password (required for PostgreSQL) |
-| `synapse_http_port` | `8008` | HTTP listener port |
-| `synapse_federation_port` | `8448` | Federation port |
-| `synapse_enable_registration` | `false` | Allow open registration |
-| `synapse_registration_shared_secret` | `""` | Shared secret for registration |
-| `synapse_report_stats` | `false` | Report anonymous usage stats |
-| `synapse_create_admin` | `false` | Create an admin user on deploy |
-| `synapse_admin_user` | `admin` | Admin username |
-| `synapse_admin_password` | `""` | Admin password |
-| `synapse_max_upload_size` | `50M` | Max file upload size |
-| `synapse_log_level` | `INFO` | Log level |
-| `synapse_turn_uris` | `[]` | TURN server URIs |
-| `synapse_turn_shared_secret` | `""` | TURN shared secret |
-| `synapse_extra_config` | `{}` | Extra config merged into homeserver.yaml |
+See `defaults/main.yml` for all defaults.
+
+| Variable | Description |
+|----------|-------------|
+| `synapse_deployment_mode` | `server` or `docker` |
+| `synapse_server_name` | Server name — **immutable after first run** |
+| `synapse_public_baseurl` | Public base URL |
+| `synapse_version` | Docker image tag |
+| `synapse_tls_mode` | `letsencrypt`, `selfsigned`, or `none` |
+| `synapse_letsencrypt_email` | Email for Let's Encrypt certificates |
+| `synapse_database_engine` | `postgresql` (default) or `sqlite` |
+| `synapse_database_host` | PostgreSQL host |
+| `synapse_database_port` | PostgreSQL port |
+| `synapse_database_name` | Database name |
+| `synapse_database_user` | Database user |
+| `synapse_database_password` | Database password |
+| `synapse_http_port` | HTTP listener port |
+| `synapse_federation_port` | Federation port |
+| `synapse_enable_registration` | Allow open registration |
+| `synapse_registration_shared_secret` | Shared secret for registration |
+| `synapse_report_stats` | Report anonymous usage stats |
+| `synapse_create_admin` | Create an admin user on deploy |
+| `synapse_admin_user` | Admin username |
+| `synapse_admin_password` | Admin password |
+| `synapse_max_upload_size` | Max file upload size |
+| `synapse_log_level` | Log level |
+| `synapse_turn_uris` | TURN server URIs |
+| `synapse_turn_shared_secret` | TURN shared secret |
+| `synapse_extra_config` | Extra keys merged into homeserver.yaml |
 
 ## TLS Options
 
