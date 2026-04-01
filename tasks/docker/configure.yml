@@ -17,7 +17,8 @@
     synapse_signing_key_path: /data/homeserver.signing.key
     synapse_log_dir: /data
     synapse_pid_file: /data/homeserver.pid
-    synapse_database_host: "{{ (synapse_database_engine == 'postgresql') | ternary('postgres', 'localhost') }}"
+    synapse_database_host: >-
+      {{ (synapse_database_engine == 'postgresql') | ternary('postgres', 'localhost') }}
   notify: Restart synapse container
 
 - name: Deploy log.yaml for Docker

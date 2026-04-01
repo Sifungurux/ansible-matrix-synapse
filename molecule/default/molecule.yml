@@ -9,7 +9,7 @@ driver:
 
 platforms:
   - name: synapse-server
-    image: geerlingguy/docker-debian12-ansible@sha256:3232ce7d506146b149802b561f49871dde8339fa6cb0e175c69db69530cedd47
+    image: geerlingguy/docker-debian12-ansible@sha256:3232ce7d506146b149802b561f49871dde8339fa6cb0e175c69db69530cedd47 # yamllint disable-line rule:line-length
     command: /lib/systemd/systemd
     tmpfs:
       - /run

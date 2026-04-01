@@ -13,7 +13,10 @@
 
 - name: Add Matrix apt repository
   ansible.builtin.apt_repository:
-    repo: "deb [signed-by=/usr/share/keyrings/matrix-org-archive-keyring.gpg] https://packages.matrix.org/debian/ {{ ansible_distribution_release }} main"
+    repo: >-
+      deb [signed-by=/usr/share/keyrings/matrix-org-archive-keyring.gpg]
+      https://packages.matrix.org/debian/
+      {{ ansible_distribution_release }} main
     filename: matrix-org
     state: present
     update_cache: true

@@ -55,11 +55,11 @@ Supports two deployment modes:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `synapse_deployment_mode` | `server` | `server` or `docker` |
-| `synapse_server_name` | `{{ inventory_hostname }}` | Matrix server name (cannot be changed after first run) |
+| `synapse_server_name` | `{{ inventory_hostname }}` | Matrix server name (immutable) |
 | `synapse_public_baseurl` | `https://{{ synapse_server_name }}` | Public base URL |
 | `synapse_version` | `latest` | Docker image tag |
 | `synapse_tls_mode` | `letsencrypt` | `letsencrypt`, `selfsigned`, or `none` |
-| `synapse_letsencrypt_email` | `""` | Email for Let's Encrypt (required when tls_mode is letsencrypt) |
+| `synapse_letsencrypt_email` | `""` | Required when `synapse_tls_mode: letsencrypt` |
 | `synapse_database_engine` | `postgresql` | `postgresql` (recommended) or `sqlite` |
 | `synapse_database_host` | `localhost` | PostgreSQL host |
 | `synapse_database_port` | `5432` | PostgreSQL port |
