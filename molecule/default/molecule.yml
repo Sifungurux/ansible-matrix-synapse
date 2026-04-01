@@ -9,7 +9,7 @@ driver:
 
 platforms:
   - name: synapse-server
-    image: debian:bookworm
+    image: ghcr.io/geerlingguy/docker-debian12-ansible:latest
     command: /lib/systemd/systemd
     tmpfs:
       - /run
