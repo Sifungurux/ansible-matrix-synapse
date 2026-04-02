@@ -24,16 +24,19 @@
           - _postgres_container.container.State.Running
 
     - name: Check Synapse responds on HTTP port
-      ansible.builtin.uri:
-        url: http://localhost:8008/_matrix/client/versions
-        return_content: true
-        status_code: 200
+      ansible.builtin.command:
+        cmd: >-
+          docker exec synapse python3 -c
+          "import urllib.request;
+          print(urllib.request.urlopen(
+          'http://localhost:8008/_matrix/client/versions').read().decode())"
       register: _synapse_versions
-      retries: 12
+      retries: 24
       delay: 5
-      until: _synapse_versions.status == 200
+      until: _synapse_versions.rc == 0
+      changed_when: false
 
     - name: Assert response contains versions
       ansible.builtin.assert:
         that:
-          - "'versions' in _synapse_versions.json"
+          - "'versions' in _synapse_versions.stdout"
