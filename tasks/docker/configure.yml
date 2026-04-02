@@ -9,7 +9,7 @@
   ansible.builtin.file:
     path: "{{ synapse_docker_data_dir }}"
     state: directory
-    mode: "0755"
+    mode: "0777"
 
 - name: Deploy homeserver.yaml for Docker
   ansible.builtin.template:
