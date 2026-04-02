@@ -4,6 +4,7 @@ Ansible role to deploy
 [Matrix Synapse](https://github.com/element-hq/synapse) homeserver.
 
 Supports two deployment modes:
+
 - **Server** — bare metal / VM install on Debian Bookworm
 - **Docker** — containerized deployment using the official Alpine image
 
