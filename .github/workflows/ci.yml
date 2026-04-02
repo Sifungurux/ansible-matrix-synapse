@@ -9,6 +9,7 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  ANSIBLE_DEPRECATION_WARNINGS: "false"
 
 jobs:
   lint:
