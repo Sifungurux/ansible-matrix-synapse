@@ -50,11 +50,14 @@
   notify: Restart synapse
 
 - name: Generate signing key
-  ansible.builtin.command:
-    cmd: >-
-      matrix-synapse --generate-keys
-      --server-name {{ synapse_server_name }}
-      --config-path {{ synapse_config_dir }}/homeserver.yaml
+  ansible.builtin.shell:
+    cmd: |
+      python3 -c "
+      import base64
+      from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+      key = Ed25519PrivateKey.generate()
+      print('ed25519 a_AAAA ' + base64.b64encode(key.private_bytes_raw()).decode())
+      " > {{ synapse_signing_key_path }}
     creates: "{{ synapse_signing_key_path }}"
   become: true
   become_user: "{{ _synapse_user }}"
