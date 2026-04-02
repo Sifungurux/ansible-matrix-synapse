@@ -31,6 +31,14 @@
     group: "{{ _synapse_group }}"
     mode: "0750"
 
+- name: Remove Debian debconf-generated conf.d overrides
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ synapse_config_dir }}/conf.d/server_name.yaml"
+    - "{{ synapse_config_dir }}/conf.d/report_stats.yaml"
+
 - name: Deploy homeserver.yaml
   ansible.builtin.template:
     src: homeserver.yaml.j2
@@ -48,19 +56,6 @@
     group: "{{ _synapse_group }}"
     mode: "0644"
   notify: Restart synapse
-
-- name: Generate signing key
-  ansible.builtin.shell:
-    cmd: |
-      python3 -c "
-      import base64
-      from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-      key = Ed25519PrivateKey.generate()
-      print('ed25519 a_AAAA ' + base64.b64encode(key.private_bytes_raw()).decode())
-      " > {{ synapse_signing_key_path }}
-    creates: "{{ synapse_signing_key_path }}"
-  become: true
-  become_user: "{{ _synapse_user }}"
 
 - name: Ensure Matrix Synapse is running and enabled
   block:
