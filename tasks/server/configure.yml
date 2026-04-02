@@ -63,7 +63,33 @@
   become_user: "{{ _synapse_user }}"
 
 - name: Ensure Matrix Synapse is running and enabled
-  ansible.builtin.service:
-    name: "{{ _synapse_service_name }}"
-    state: started
-    enabled: true
+  block:
+    - name: Start and enable matrix-synapse service
+      ansible.builtin.service:
+        name: "{{ _synapse_service_name }}"
+        state: started
+        enabled: true
+  rescue:
+    - name: Collect service status
+      ansible.builtin.command: systemctl status matrix-synapse --no-pager
+      register: _svc_status
+      changed_when: false
+      failed_when: false
+
+    - name: Collect journal output
+      ansible.builtin.command: journalctl -xeu matrix-synapse --no-pager -n 80
+      register: _journal
+      changed_when: false
+      failed_when: false
+
+    - name: Show service status
+      ansible.builtin.debug:
+        msg: "{{ _svc_status.stdout_lines }}"
+
+    - name: Show journal
+      ansible.builtin.debug:
+        msg: "{{ _journal.stdout_lines }}"
+
+    - name: Re-raise service startup failure
+      ansible.builtin.fail:
+        msg: "matrix-synapse failed to start — see debug output above"
