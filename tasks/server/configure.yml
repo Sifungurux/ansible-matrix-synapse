@@ -49,16 +49,6 @@
     mode: "0644"
   notify: Restart synapse
 
-- name: Generate signing key
-  ansible.builtin.command:
-    cmd: >-
-      python3 -m synapse.app.homeserver --generate-keys
-      --server-name {{ synapse_server_name }}
-      --config-path {{ synapse_config_dir }}/homeserver.yaml
-    creates: "{{ synapse_signing_key_path }}"
-  become: true
-  become_user: "{{ _synapse_user }}"
-
 - name: Ensure Matrix Synapse is running and enabled
   ansible.builtin.service:
     name: "{{ _synapse_service_name }}"
