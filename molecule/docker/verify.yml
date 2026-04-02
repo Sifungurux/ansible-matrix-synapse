@@ -23,17 +23,6 @@
         that:
           - _postgres_container.container.State.Running
 
-    - name: Collect Synapse container logs
-      ansible.builtin.command:
-        cmd: docker logs synapse --tail 80
-      register: _synapse_logs
-      changed_when: false
-      failed_when: false
-
-    - name: Show Synapse container logs
-      ansible.builtin.debug:
-        msg: "{{ (_synapse_logs.stdout_lines | default([])) + (_synapse_logs.stderr_lines | default([])) }}"
-
     - name: Check Synapse responds on HTTP port
       ansible.builtin.command:
         cmd: >-
