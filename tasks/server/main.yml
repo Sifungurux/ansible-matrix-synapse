@@ -1,0 +1,21 @@
+---
+- name: Set up Matrix Synapse apt repository
+  ansible.builtin.include_tasks: repo.yml
+
+- name: Install Matrix Synapse packages
+  ansible.builtin.include_tasks: install.yml
+
+- name: Set up PostgreSQL database
+  ansible.builtin.include_tasks: postgresql.yml
+  when: synapse_database_engine == 'postgresql'
+
+- name: Configure TLS certificates
+  ansible.builtin.include_tasks: tls.yml
+  when: synapse_tls_mode != 'none'
+
+- name: Configure Matrix Synapse
+  ansible.builtin.include_tasks: configure.yml
+
+- name: Create admin user
+  ansible.builtin.include_tasks: user_control.yml
+  when: synapse_create_admin | bool

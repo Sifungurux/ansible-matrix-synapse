@@ -1,0 +1,32 @@
+---
+- name: Install PostgreSQL packages
+  ansible.builtin.apt:
+    name: "{{ _synapse_postgresql_packages }}"
+    state: present
+    update_cache: true
+
+- name: Ensure PostgreSQL is running
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
+
+- name: Create Synapse database user
+  community.postgresql.postgresql_user:
+    name: "{{ synapse_database_user }}"
+    password: "{{ synapse_database_password }}"
+    state: present
+  become: true
+  become_user: postgres
+
+- name: Create Synapse database
+  community.postgresql.postgresql_db:
+    name: "{{ synapse_database_name }}"
+    owner: "{{ synapse_database_user }}"
+    encoding: "{{ synapse_database_encoding }}"
+    lc_collate: "{{ synapse_database_locale }}"
+    lc_ctype: "{{ synapse_database_locale }}"
+    template: template0
+    state: present
+  become: true
+  become_user: postgres

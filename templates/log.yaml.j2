@@ -1,37 +1,34 @@
-
+# {{ ansible_managed }}
 version: 1
 
 formatters:
   precise:
-   format: '%(asctime)s - %(name)s - %(lineno)d - %(levelname)s - %(request)s- %(message)s'
+    format: '%(asctime)s - %(name)s - %(lineno)d - %(levelname)s - %(request)s - %(message)s'
 
 filters:
   context:
-    (): synapse.util.logcontext.LoggingContextFilter
+    (): synapse.logging.context.LoggingContextFilter
     request: ""
 
 handlers:
   file:
     class: logging.handlers.RotatingFileHandler
     formatter: precise
-    filename: /var/log/matrix-synapse/homeserver.log
+    filename: {{ synapse_log_dir }}/homeserver.log
     maxBytes: 104857600
     backupCount: 10
     filters: [context]
-    level: INFO
+    level: {{ synapse_log_level }}
   console:
     class: logging.StreamHandler
     formatter: precise
+    filters: [context]
     level: WARN
 
 loggers:
-    synapse:
-        level: INFO
-
-    synapse.storage.SQL:
-        level: INFO
+  synapse.storage.SQL:
+    level: {{ synapse_log_level }}
 
 root:
-    level: INFO
-    handlers: [file, console]
-
+  level: {{ synapse_log_level }}
+  handlers: [file, console]

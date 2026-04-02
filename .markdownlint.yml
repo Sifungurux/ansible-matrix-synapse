@@ -1,0 +1,3 @@
+---
+default: true
+MD043: false  # Do not enforce a required heading structure

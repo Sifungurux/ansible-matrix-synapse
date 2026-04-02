@@ -1,0 +1,53 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Check Synapse container is running
+      community.docker.docker_container_info:
+        name: synapse
+      register: _synapse_container
+
+    - name: Assert container is running
+      ansible.builtin.assert:
+        that:
+          - _synapse_container.container.State.Running
+
+    - name: Check PostgreSQL container is running
+      community.docker.docker_container_info:
+        name: synapse-postgres
+      register: _postgres_container
+
+    - name: Assert PostgreSQL is running
+      ansible.builtin.assert:
+        that:
+          - _postgres_container.container.State.Running
+
+    - name: Collect Synapse container logs
+      ansible.builtin.command:
+        cmd: docker logs synapse --tail 80
+      register: _synapse_logs
+      changed_when: false
+      failed_when: false
+
+    - name: Show Synapse container logs
+      ansible.builtin.debug:
+        msg: "{{ (_synapse_logs.stdout_lines | default([])) + (_synapse_logs.stderr_lines | default([])) }}"
+
+    - name: Check Synapse responds on HTTP port
+      ansible.builtin.command:
+        cmd: >-
+          docker exec synapse python3 -c
+          "import urllib.request;
+          print(urllib.request.urlopen(
+          'http://localhost:8008/_matrix/client/versions').read().decode())"
+      register: _synapse_versions
+      retries: 24
+      delay: 5
+      until: _synapse_versions.rc == 0
+      changed_when: false
+
+    - name: Assert response contains versions
+      ansible.builtin.assert:
+        that:
+          - "'versions' in _synapse_versions.stdout"

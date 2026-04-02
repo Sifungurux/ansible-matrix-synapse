@@ -1,0 +1,51 @@
+---
+- name: Ensure Docker project directory exists
+  ansible.builtin.file:
+    path: "{{ synapse_docker_compose_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Ensure Docker data directory exists
+  ansible.builtin.file:
+    path: "{{ synapse_docker_data_dir }}"
+    state: directory
+    mode: "0777"
+
+- name: Deploy homeserver.yaml for Docker
+  ansible.builtin.template:
+    src: homeserver.yaml.j2
+    dest: "{{ synapse_docker_data_dir }}/homeserver.yaml"
+    mode: "0644"
+  vars:
+    synapse_config_dir: /data
+    synapse_data_dir: /data
+    synapse_media_store_path: /data/media_store
+    synapse_signing_key_path: /data/homeserver.signing.key
+    synapse_log_dir: /data
+    synapse_pid_file: /data/homeserver.pid
+    synapse_database_host: >-
+      {{ (synapse_database_engine == 'postgresql') | ternary('postgres', 'localhost') }}
+  notify: Restart synapse container
+
+- name: Deploy log.yaml for Docker
+  ansible.builtin.template:
+    src: log.yaml.j2
+    dest: "{{ synapse_docker_data_dir }}/log.yaml"
+    mode: "0644"
+  vars:
+    synapse_log_dir: /data
+    synapse_config_dir: /data
+  notify: Restart synapse container
+
+- name: Deploy docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ synapse_docker_compose_dir }}/docker-compose.yml"
+    mode: "0640"
+  notify: Restart synapse container
+
+- name: Start Synapse containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ synapse_docker_compose_dir }}"
+    state: present
+  changed_when: false

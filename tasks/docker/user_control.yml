@@ -1,0 +1,26 @@
+---
+- name: Wait for Synapse container to be ready
+  ansible.builtin.uri:
+    url: "http://localhost:{{ synapse_http_port }}/_matrix/client/versions"
+    return_content: false
+    status_code: 200
+  register: _synapse_health
+  until: _synapse_health.status == 200
+  retries: 12
+  delay: 5
+
+- name: Register admin user in container
+  community.docker.docker_container_exec:
+    container: synapse
+    command: >-
+      register_new_matrix_user
+      -u {{ synapse_admin_user }}
+      -p {{ synapse_admin_password }}
+      -a
+      -c /data/homeserver.yaml
+      http://localhost:8008
+  register: _synapse_register
+  changed_when: "'Success' in _synapse_register.stdout"
+  failed_when:
+    - _synapse_register.rc != 0
+    - "'User ID already taken' not in _synapse_register.stderr"

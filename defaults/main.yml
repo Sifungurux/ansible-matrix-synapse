@@ -1,8 +1,91 @@
 ---
+# Deployment mode: "server" (bare metal Debian) or "docker" (Alpine container)
+synapse_deployment_mode: server
 
-# Server configurations
-report_stats: no
-shared_secret: Hemmeligt
+# Server identity
+synapse_server_name: "{{ inventory_hostname }}"
+synapse_public_baseurl: "https://{{ synapse_server_name }}"
 
-# Admin settings
-admin_password: testpassword
+# Synapse version (used as Docker image tag; server mode uses apt latest)
+synapse_version: v1.149.1
+synapse_docker_image: "matrixdotorg/synapse:{{ synapse_version }}"
+
+# Network
+synapse_http_port: 8008
+synapse_federation_port: 8448
+synapse_bind_address: "0.0.0.0"
+
+# TLS: letsencrypt | selfsigned | none (none = behind reverse proxy)
+synapse_tls_mode: letsencrypt
+synapse_tls_cert_path: "/etc/matrix-synapse/tls/fullchain.pem"
+synapse_tls_key_path: "/etc/matrix-synapse/tls/privkey.pem"
+synapse_letsencrypt_email: ""
+synapse_letsencrypt_domain: "{{ synapse_server_name }}"
+
+# Database: postgresql (recommended) | sqlite (dev only)
+synapse_database_engine: postgresql
+synapse_database_host: localhost
+synapse_database_port: 5432
+synapse_database_name: synapse
+synapse_database_user: synapse
+synapse_database_password: ""
+synapse_database_locale: C
+synapse_database_encoding: UTF8
+
+# Registration
+synapse_enable_registration: false
+synapse_registration_shared_secret: ""
+synapse_report_stats: false
+
+# Admin user
+synapse_admin_user: admin
+synapse_admin_password: ""
+synapse_create_admin: false
+
+# Paths (server mode)
+synapse_config_dir: /etc/matrix-synapse
+synapse_data_dir: /var/lib/matrix-synapse
+synapse_log_dir: /var/log/matrix-synapse
+synapse_media_store_path: "{{ synapse_data_dir }}/media_store"
+synapse_signing_key_path: "{{ synapse_config_dir }}/homeserver.signing.key"
+synapse_pid_file: /var/run/matrix-synapse.pid
+
+# Paths (docker mode)
+synapse_docker_data_dir: /opt/matrix-synapse/data
+synapse_docker_compose_dir: /opt/matrix-synapse
+
+# Logging
+synapse_log_level: INFO
+
+# Media
+synapse_max_upload_size: "50M"
+
+# URL preview
+synapse_url_preview_enabled: false
+synapse_url_preview_ip_range_blacklist:
+  - '127.0.0.0/8'
+  - '10.0.0.0/8'
+  - '172.16.0.0/12'
+  - '192.168.0.0/16'
+  - '100.64.0.0/10'
+  - '169.254.0.0/16'
+  - '::1/128'
+  - 'fe80::/10'
+  - 'fc00::/7'
+
+# TURN server
+synapse_turn_uris: []
+synapse_turn_shared_secret: ""
+synapse_turn_user_lifetime: "1h"
+
+# Rate limiting
+synapse_rc_message:
+  per_second: 0.2
+  burst_count: 10
+
+# Trusted key servers
+synapse_trusted_key_servers:
+  - server_name: matrix.org
+
+# Extra config merged into homeserver.yaml (advanced)
+synapse_extra_config: {}

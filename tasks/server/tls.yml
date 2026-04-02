@@ -1,0 +1,52 @@
+---
+- name: Ensure TLS directory exists
+  ansible.builtin.file:
+    path: "{{ synapse_tls_cert_path | dirname }}"
+    state: directory
+    owner: "{{ _synapse_user }}"
+    group: "{{ _synapse_group }}"
+    mode: "0750"
+
+# Let's Encrypt
+- name: Obtain Let's Encrypt certificate
+  ansible.builtin.command:
+    cmd: >-
+      certbot certonly --standalone
+      --non-interactive --agree-tos
+      --email {{ synapse_letsencrypt_email }}
+      --domain {{ synapse_letsencrypt_domain }}
+      --cert-path {{ synapse_tls_cert_path }}
+      --key-path {{ synapse_tls_key_path }}
+    creates: "{{ synapse_tls_cert_path }}"
+  when: synapse_tls_mode == 'letsencrypt'
+  notify: Restart synapse
+
+- name: Enable certbot renewal timer
+  ansible.builtin.systemd:
+    name: certbot.timer
+    state: started
+    enabled: true
+  when: synapse_tls_mode == 'letsencrypt'
+
+# Self-signed
+- name: Generate self-signed private key
+  community.crypto.openssl_privatekey:
+    path: "{{ synapse_tls_key_path }}"
+    size: 4096
+    owner: "{{ _synapse_user }}"
+    group: "{{ _synapse_group }}"
+    mode: "0640"
+  when: synapse_tls_mode == 'selfsigned'
+  notify: Restart synapse
+
+- name: Generate self-signed certificate
+  community.crypto.x509_certificate:
+    path: "{{ synapse_tls_cert_path }}"
+    privatekey_path: "{{ synapse_tls_key_path }}"
+    provider: selfsigned
+    selfsigned_not_after: "+3650d"
+    owner: "{{ _synapse_user }}"
+    group: "{{ _synapse_group }}"
+    mode: "0644"
+  when: synapse_tls_mode == 'selfsigned'
+  notify: Restart synapse

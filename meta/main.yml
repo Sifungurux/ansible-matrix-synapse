@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  role_name: matrix_synapse
+  author: kirk
+  description: Deploy Matrix Synapse homeserver (Debian server or Docker/Alpine)
+  license: Apache-2.0
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+  galaxy_tags:
+    - matrix
+    - synapse
+    - chat
+    - federation
+    - docker
+dependencies: []

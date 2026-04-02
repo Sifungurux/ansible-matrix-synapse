@@ -1,0 +1,18 @@
+---
+- name: Restart synapse
+  ansible.builtin.service:
+    name: "{{ _synapse_service_name }}"
+    state: restarted
+  when: synapse_deployment_mode == 'server'
+
+- name: Restart synapse container
+  community.docker.docker_compose_v2:
+    project_src: "{{ synapse_docker_compose_dir }}"
+    state: restarted
+  when: synapse_deployment_mode == 'docker'
+
+- name: Reload synapse
+  ansible.builtin.service:
+    name: "{{ _synapse_service_name }}"
+    state: reloaded
+  when: synapse_deployment_mode == 'server'

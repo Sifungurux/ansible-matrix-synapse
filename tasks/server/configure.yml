@@ -1,0 +1,90 @@
+---
+- name: Ensure Synapse config directory exists
+  ansible.builtin.file:
+    path: "{{ synapse_config_dir }}"
+    state: directory
+    owner: "{{ _synapse_user }}"
+    group: "{{ _synapse_group }}"
+    mode: "0750"
+
+- name: Ensure Synapse data directory exists
+  ansible.builtin.file:
+    path: "{{ synapse_data_dir }}"
+    state: directory
+    owner: "{{ _synapse_user }}"
+    group: "{{ _synapse_group }}"
+    mode: "0750"
+
+- name: Ensure media store directory exists
+  ansible.builtin.file:
+    path: "{{ synapse_media_store_path }}"
+    state: directory
+    owner: "{{ _synapse_user }}"
+    group: "{{ _synapse_group }}"
+    mode: "0750"
+
+- name: Ensure log directory exists
+  ansible.builtin.file:
+    path: "{{ synapse_log_dir }}"
+    state: directory
+    owner: "{{ _synapse_user }}"
+    group: "{{ _synapse_group }}"
+    mode: "0750"
+
+- name: Remove Debian debconf-generated conf.d overrides
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ synapse_config_dir }}/conf.d/server_name.yaml"
+    - "{{ synapse_config_dir }}/conf.d/report_stats.yaml"
+
+- name: Deploy homeserver.yaml
+  ansible.builtin.template:
+    src: homeserver.yaml.j2
+    dest: "{{ synapse_config_dir }}/homeserver.yaml"
+    owner: "{{ _synapse_user }}"
+    group: "{{ _synapse_group }}"
+    mode: "0640"
+  notify: Restart synapse
+
+- name: Deploy log configuration
+  ansible.builtin.template:
+    src: log.yaml.j2
+    dest: "{{ synapse_config_dir }}/log.yaml"
+    owner: "{{ _synapse_user }}"
+    group: "{{ _synapse_group }}"
+    mode: "0644"
+  notify: Restart synapse
+
+- name: Ensure Matrix Synapse is running and enabled
+  block:
+    - name: Start and enable matrix-synapse service
+      ansible.builtin.service:
+        name: "{{ _synapse_service_name }}"
+        state: started
+        enabled: true
+  rescue:
+    - name: Collect service status
+      ansible.builtin.command: systemctl status matrix-synapse --no-pager
+      register: _svc_status
+      changed_when: false
+      failed_when: false
+
+    - name: Collect journal output
+      ansible.builtin.command: journalctl -xeu matrix-synapse --no-pager -n 80
+      register: _journal
+      changed_when: false
+      failed_when: false
+
+    - name: Show service status
+      ansible.builtin.debug:
+        msg: "{{ _svc_status.stdout_lines }}"
+
+    - name: Show journal
+      ansible.builtin.debug:
+        msg: "{{ _journal.stdout_lines }}"
+
+    - name: Re-raise service startup failure
+      ansible.builtin.fail:
+        msg: "matrix-synapse failed to start — see debug output above"
