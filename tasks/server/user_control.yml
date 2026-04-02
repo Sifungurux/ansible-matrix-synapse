@@ -22,4 +22,4 @@
   changed_when: "'Success' in _synapse_register.stdout"
   failed_when:
     - _synapse_register.rc != 0
-    - "'User ID already taken' not in _synapse_register.stderr"
+    - "'User ID already taken' not in _synapse_register.stdout"
