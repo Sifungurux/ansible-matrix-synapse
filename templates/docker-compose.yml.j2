@@ -35,3 +35,16 @@ services:
       timeout: 5s
       retries: 5
 {% endif %}
+{% if synapse_element_enabled %}
+{% set _element_images = {'element': 'ghcr.io/element-hq/element-web:v1.11.96', 'cinny': 'ghcr.io/cinnyapp/cinny:v4.12.2'} %}
+{% set _element_image = synapse_element_image if synapse_element_image else _element_images[synapse_element_client] %}
+
+  element:
+    image: {{ _element_image }}
+    container_name: synapse-element
+    restart: unless-stopped
+    ports:
+      - "{{ synapse_element_port }}:80"
+    volumes:
+      - {{ synapse_docker_data_dir }}/element-config.json:/app/config.json:ro
+{% endif %}
