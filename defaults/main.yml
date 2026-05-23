@@ -89,3 +89,9 @@ synapse_trusted_key_servers:
 
 # Extra config merged into homeserver.yaml (advanced)
 synapse_extra_config: {}
+
+# Web client (docker mode only)
+synapse_element_enabled: false
+synapse_element_client: element
+synapse_element_port: 8080
+synapse_element_image: ""
