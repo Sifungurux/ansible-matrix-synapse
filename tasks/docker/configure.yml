@@ -37,6 +37,14 @@
     synapse_config_dir: /data
   notify: Restart synapse container
 
+- name: Deploy web client config
+  ansible.builtin.template:
+    src: "{{ synapse_element_client }}-config.json.j2"
+    dest: "{{ synapse_docker_data_dir }}/element-config.json"
+    mode: "0644"
+  when: synapse_element_enabled
+  notify: Restart synapse container
+
 - name: Deploy docker-compose.yml
   ansible.builtin.template:
     src: docker-compose.yml.j2
