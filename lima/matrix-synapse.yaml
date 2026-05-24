@@ -1,8 +1,9 @@
 # Lima VM for local testing of ansible-matrix-synapse in docker deployment mode.
 #
-# Uses x86_64 to match CI — the role's docker/install.yml has arch=amd64 hardcoded
-# in the apt repo stanza, so running ARM64 natively would produce a repo mismatch.
-# On Apple Silicon, Lima uses Rosetta 2 for x86 emulation (slower but correct).
+# Uses native ARM64 (aarch64) on Apple Silicon for best performance.
+# Note: the role's docker/install.yml has arch=amd64 hardcoded in the apt repo stanza,
+# but Docker Engine is pre-installed by this VM's provision script so the Ansible task
+# becomes a no-op and the arch mismatch does not cause a failure.
 #
 # Usage:
 #   limactl create --name matrix-synapse lima/matrix-synapse.yaml
@@ -10,13 +11,10 @@
 #   limactl show-ssh --format=config matrix-synapse  # get SSH port for inventory
 
 vmType: vz
-rosetta:
-  enabled: true
-  binfmt: true
 
 images:
-  - location: "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2"
-    arch: x86_64
+  - location: "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-arm64.qcow2"
+    arch: aarch64
 
 cpus: 2
 memory: "2GiB"
@@ -30,11 +28,9 @@ portForwards:
   - guestPort: 8008
     hostIP: "127.0.0.1"
     hostPort: 8008
-    description: "Synapse HTTP"
   - guestPort: 8080
     hostIP: "127.0.0.1"
     hostPort: 8080
-    description: "Element Web"
 
 provision:
   - mode: system

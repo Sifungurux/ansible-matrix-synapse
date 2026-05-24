@@ -5,7 +5,7 @@
     - role: ansible-matrix-synapse
       vars:
         synapse_server_name: matrix.local
-        synapse_public_baseurl: "http://matrix.local:8008"
+        synapse_public_baseurl: "http://localhost:8008"
         synapse_deployment_mode: docker
         synapse_database_engine: postgresql
         synapse_database_password: "change-me"
