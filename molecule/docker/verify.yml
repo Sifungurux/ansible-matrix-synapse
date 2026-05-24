@@ -51,3 +51,36 @@
       ansible.builtin.assert:
         that:
           - "'versions' in _synapse_versions.stdout"
+
+    - name: Check Element Web container is running
+      community.docker.docker_container_info:
+        name: synapse-element
+      register: _element_container
+
+    - name: Assert Element Web container is running
+      ansible.builtin.assert:
+        that:
+          - _element_container.container.State.Running
+
+    - name: Check Element Web responds on HTTP port
+      ansible.builtin.command:
+        cmd: docker exec synapse-element wget -qO- http://localhost/
+      register: _element_response
+      retries: 12
+      delay: 5
+      until: _element_response.rc == 0
+      changed_when: false
+
+    - name: Check Element Web config.json contains server name
+      ansible.builtin.command:
+        cmd: docker exec synapse-element wget -qO- http://localhost/config.json
+      register: _element_config
+      retries: 6
+      delay: 5
+      until: _element_config.rc == 0
+      changed_when: false
+
+    - name: Assert config.json references the homeserver
+      ansible.builtin.assert:
+        that:
+          - "'test.matrix.local' in _element_config.stdout"

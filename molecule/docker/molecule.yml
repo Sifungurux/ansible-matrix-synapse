@@ -36,6 +36,7 @@ provisioner:
         synapse_tls_mode: none
         synapse_registration_shared_secret: test-secret-change-me
         synapse_create_admin: false
+        synapse_element_enabled: true
 
 verifier:
   name: ansible
