@@ -125,7 +125,7 @@ synapse_tls_mode: none
 
 ## Local Testing with Lima
 
-A [Lima](https://lima-vm.io/) VM config is included for running the role locally against a real Debian 12 host with Docker pre-installed. Ports 8008 (Synapse) and 8080 (Element Web) are forwarded to `localhost`.
+A [Lima](https://lima-vm.io/) VM config is included for running the role locally against a real Debian 12 host with Docker pre-installed. Ports 8008 (Synapse) and 8080 (Element Web) are forwarded to `localhost`. The provision script installs Docker Engine and adds the Lima user to the `docker` group automatically — no manual steps needed after `limactl start`.
 
 **Requirements:** Lima installed (`brew install lima`)
 
