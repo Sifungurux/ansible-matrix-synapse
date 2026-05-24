@@ -1,0 +1,7 @@
+# Copy to inventory.ini and fill in the SSH port from:
+#   limactl show-ssh --format=config matrix-synapse
+#
+# inventory.ini is gitignored — keep secrets and local paths out of git.
+
+[matrix]
+matrix-synapse ansible_host=127.0.0.1 ansible_port=NNNNN ansible_user=kirk ansible_ssh_private_key_file=~/.lima/matrix-synapse/id_rsa

@@ -1,0 +1,63 @@
+# Lima VM for local testing of ansible-matrix-synapse in docker deployment mode.
+#
+# Uses x86_64 to match CI — the role's docker/install.yml has arch=amd64 hardcoded
+# in the apt repo stanza, so running ARM64 natively would produce a repo mismatch.
+# On Apple Silicon, Lima uses Rosetta 2 for x86 emulation (slower but correct).
+#
+# Usage:
+#   limactl create --name matrix-synapse lima/matrix-synapse.yaml
+#   limactl start matrix-synapse
+#   limactl show-ssh --format=config matrix-synapse  # get SSH port for inventory
+
+vmType: vz
+rosetta:
+  enabled: true
+  binfmt: true
+
+images:
+  - location: "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2"
+    arch: x86_64
+
+cpus: 2
+memory: "2GiB"
+disk: "20GiB"
+
+containerd:
+  system: false
+  user: false
+
+portForwards:
+  - guestPort: 8008
+    hostIP: "127.0.0.1"
+    hostPort: 8008
+    description: "Synapse HTTP"
+  - guestPort: 8080
+    hostIP: "127.0.0.1"
+    hostPort: 8080
+    description: "Element Web"
+
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -euo pipefail
+      apt-get update -qq
+      apt-get install -y ca-certificates curl gnupg python3
+      install -m 0755 -d /etc/apt/keyrings
+      curl -fsSL https://download.docker.com/linux/debian/gpg \
+        -o /etc/apt/keyrings/docker.asc
+      chmod a+r /etc/apt/keyrings/docker.asc
+      echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+        https://download.docker.com/linux/debian \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+        | tee /etc/apt/sources.list.d/docker.list > /dev/null
+      apt-get update -qq
+      apt-get install -y \
+        docker-ce \
+        docker-ce-cli \
+        containerd.io \
+        docker-buildx-plugin \
+        docker-compose-plugin \
+        python3-docker
+      systemctl enable --now docker
+      usermod -aG docker "{{.User}}"

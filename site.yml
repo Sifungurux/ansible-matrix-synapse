@@ -1,0 +1,16 @@
+---
+- hosts: matrix
+  become: true
+  roles:
+    - role: ansible-matrix-synapse
+      vars:
+        synapse_server_name: matrix.local
+        synapse_public_baseurl: "http://matrix.local:8008"
+        synapse_deployment_mode: docker
+        synapse_database_engine: postgresql
+        synapse_database_password: "change-me"
+        synapse_registration_shared_secret: "change-me"
+        synapse_tls_mode: none
+        synapse_element_enabled: true
+        synapse_element_client: element
+        synapse_element_port: 8080
