@@ -149,6 +149,8 @@ ansible-playbook -i inventory.ini site.yml
 
 Once the playbook completes, Element Web is available at `http://localhost:8080`.
 
+> **`synapse_public_baseurl` must be `http://localhost:8008` for local Lima testing.** This value ends up in both `homeserver.yaml` and the Element Web `config.json`. If set to a hostname that the browser cannot resolve (e.g. `matrix.local`), Element Web will load but render a blank page. For a real deployment with a public domain this is not an issue.
+
 **Teardown:**
 
 ```bash
